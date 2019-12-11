@@ -51,78 +51,83 @@ I2SWavPlayer* gpI2SPlayer;
 void TestDynamicHum()
 {
 
-	Serial.println("Hum pitch shift test starts.");
+   Serial.println("Hum pitch shift test starts.");
 
-	gpI2SPlayer = new I2SWavPlayer();
-	gpDynamicNecPlayer = new DynamicNECSoundManager(gpI2SPlayer);
+   gpI2SPlayer = new I2SWavPlayer(PIN_I2S_MCK,
+                                  PIN_I2S_BCLK,
+                                  PIN_I2S_LRCK,
+                                  PIN_I2S_DIN,
+                                  PIN_I2S_SD);
+
+   gpDynamicNecPlayer = new DynamicNECSoundManager(gpI2SPlayer);
 
 
-	gpI2SPlayer->Init();
-	gpI2SPlayer->StartPlayback();
+   gpI2SPlayer->Init();
+   gpI2SPlayer->StartPlayback();
 
-	gpDynamicNecPlayer->Init();                            //Initialize the sound manager
-	gpDynamicNecPlayer->SetFontDirNameBase("2205/ifont");  //(optional) Set base name for fonts based on SD card layout
-	                                                       //(defaults to "necfont" as base name)
-	gpDynamicNecPlayer->SetFont(0);                        //Select font index
-	gpDynamicNecPlayer->SetMasterVolume(12);               //Set volume from 0 (mute) to 100 (full)
+   gpDynamicNecPlayer->Init();                            //Initialize the sound manager
+   gpDynamicNecPlayer->SetFontDirNameBase("2205/ifont");  //(optional) Set base name for fonts based on SD card layout
+                                                          //(defaults to "necfont" as base name)
+   gpDynamicNecPlayer->SetFont(0);                        //Select font index
+   gpDynamicNecPlayer->SetMasterVolume(12);               //Set volume from 0 (mute) to 100 (full)
 
-	gpDynamicNecPlayer->PlaySound(SoundTypes::eeHumSnd, 0);
+   gpDynamicNecPlayer->PlaySound(SoundTypes::eeHumSnd, 0);
 
-	Serial.println("Pitching down.");
-	float lPitch = 0.0;
-	while(lPitch > -2.0)
-	{
-		unsigned long lStartTime = millis();
-		while(millis() - lStartTime < 100)
-		{
-			gpI2SPlayer->ContinuePlayback();
-		}
-		lPitch -= 0.03;
+   Serial.println("Pitching down.");
+   float lPitch = 0.0;
+   while(lPitch > -2.0)
+   {
+      unsigned long lStartTime = millis();
+      while(millis() - lStartTime < 100)
+      {
+         gpI2SPlayer->ContinuePlayback();
+      }
+      lPitch -= 0.03;
 
-		//Adjust the pitch of the hum sound
-		gpDynamicNecPlayer->SetSoundPitch(SoundTypes::eeHumSnd, lPitch);
-	}
+      //Adjust the pitch of the hum sound
+      gpDynamicNecPlayer->SetSoundPitch(SoundTypes::eeHumSnd, lPitch);
+   }
 
-	Serial.println("Pitching up.");
-	while(lPitch < 4.0)
-	{
-		unsigned long lStartTime = millis();
+   Serial.println("Pitching up.");
+   while(lPitch < 4.0)
+   {
+      unsigned long lStartTime = millis();
 
-		while(millis() - lStartTime < 80)
-		{
-			gpI2SPlayer->ContinuePlayback();
-		}
-		lPitch += 0.05;
+      while(millis() - lStartTime < 80)
+      {
+         gpI2SPlayer->ContinuePlayback();
+      }
+      lPitch += 0.05;
 
-		//Adjust the pitch of the hum sound
-		gpDynamicNecPlayer->SetSoundPitch(SoundTypes::eeHumSnd, lPitch);
-	}
+      //Adjust the pitch of the hum sound
+      gpDynamicNecPlayer->SetSoundPitch(SoundTypes::eeHumSnd, lPitch);
+   }
 
-	Serial.println("Test ends.");
+   Serial.println("Test ends.");
 
-	gpI2SPlayer->StopPlayback();
-	delete gpDynamicNecPlayer;
-	delete gpI2SPlayer;
+   gpI2SPlayer->StopPlayback();
+   delete gpDynamicNecPlayer;
+   delete gpI2SPlayer;
 
 }
 
 void setup()
 {
-	delay(1000);
-	Serial.begin(115200);
+   delay(1000);
+   Serial.begin(115200);
 
-	if(!SD.begin(8000000, PIN_SPI_CS))
-	{
-		Serial.println("SD init failed.");
-		return; //Punt. We can't work without SD card
-	}
-	Serial.println("SD init completed.");
+   if(!SD.begin(8000000, PIN_SPI_CS))
+   {
+      Serial.println("SD init failed.");
+      return; //Punt. We can't work without SD card
+   }
+   Serial.println("SD init completed.");
 
-	TestDynamicHum();
+   TestDynamicHum();
 }
 
 // The loop function is called in an endless loop
 void loop()
 {
-	//Do nothing
+   //Do nothing
 }
