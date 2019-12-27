@@ -31,4 +31,8 @@
 #include "FileUtils.h"
 #include "AMotionReactive.h"
 
+#include "Motion/AMotionManager.h"
+#include "Motion/Mpu6050LiteMotionManager.h"
+#include "Motion/Mpu6050AdvancedMotionManager.h"
+
 #endif /* NSABER_H_ */
